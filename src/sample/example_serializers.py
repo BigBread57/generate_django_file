@@ -1,15 +1,15 @@
 from rest_framework import serializers
 
-from {{path_to_app}}.models import {{main_class}}
+from {{path_to_app}}.models import {{MainClass}}
 
 
-class {{main_class}}Serializer(serializers.ModelSerializer):
+class {{MainClass}}Serializer(serializers.ModelSerializer):
     """{{docs}}"""
 
     class Meta(object):
-        model = {{main_class}}
+        model = {{MainClass}}
         fields = {{list_main_fields}}
 
 
-class {{main_class}}Serializer(serializers.Serializer):
+class {{MainClass}}Serializer(serializers.Serializer):
     """{{docs}}"""

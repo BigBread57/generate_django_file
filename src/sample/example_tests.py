@@ -7,27 +7,27 @@ fake = Faker()
 
 
 @pytest.mark.django_db()
-def test_{{hump_main_class}}_format(
+def test_{{main_class}}_format(
     api_client,
-    {{hump_main_class}},
-    {{hump_main_class}}_format,
+    {{main_class}},
+    {{main_class}}_format,
 ):
-    """Формат {{main_class}}"""
+    """Формат {{MainClass}}"""
     url = reverse(
         'api:{{app-name}}:{{main-class}}-detail',
-        [{{hump_main_class}}.pk],
+        [{{main_class}}.pk],
     )
 
     json_response = api_client.get(url).json()
 
-    assert json_response == {{hump_main_class}}_format({{hump_main_class}})
+    assert json_response == {{main_class}}_format({{main_class}})
 
 
 @pytest.mark.django_db()
-def test_{{hump_main_class}}_post(
+def test_{{main_class}}_post(
     api_client,
 ):
-    """Создание {{main_class}}"""
+    """Создание {{MainClass}}"""
     url = reverse('api:{{app-name}}:{{main-class}}-list')
     json_response = api_client.post(
         url,
@@ -39,14 +39,14 @@ def test_{{hump_main_class}}_post(
 
 
 @pytest.mark.django_db()
-def test_{{hump_main_class}}_delete(
+def test_{{main_class}}_delete(
     api_client,
-    {{hump_main_class}},
+    {{main_class}},
 ):
-    """Удаление {{main_class}}"""
+    """Удаление {{MainClass}}"""
     url = reverse(
         'api:{{app-name}}:{{main-class}}-detail',
-        [{{hump_main_class}}.pk],
+        [{{main_class}}.pk],
     )
 
     json_response = api_client.delete(url)
@@ -55,14 +55,14 @@ def test_{{hump_main_class}}_delete(
 
 
 @pytest.mark.django_db()
-def test_{{hump_main_class}}_change(
+def test_{{main_class}}_change(
     api_client,
-    {{hump_main_class}},
+    {{main_class}},
 ):
-    """Изменение {{main_class}}"""
+    """Изменение {{MainClass}}"""
     url = reverse(
         'api:{{app-name}}:{{main-class}}-detail',
-        [{{hump_main_class}}.pk],
+        [{{main_class}}.pk],
     )
 
     json_response = api_client.put(

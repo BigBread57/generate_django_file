@@ -1,0 +1,4 @@
+@pytest.fixture
+def api_client():
+    """Клиент с анонимным пользователем."""
+    return APIClient()

@@ -4,13 +4,32 @@ import re
 from abc import abstractmethod
 from pathlib import Path
 
+from src.settings import config
 
-class Utils(object):
-    """Класс содержит функции, которые используются несколько раз."""
 
-    # Ключ данной переменной это тип поля для моделей.
-    # Первый элемент кортежа - тип поля в сериализаторе
-    # Второй элемент кортежа - тип поля для тестов в библиотеке faker
+def add_change_me(field, test=False) -> str:
+    """
+    Добавляет __change_me__, если передано None.
+
+    :param field: поле для сериализатора или теста
+    :param test: флаг указывающий, что поле для генерации тестов
+    :return: значение поле: если None, добавляем с __change_me__, иначе
+    переданное значение поля
+    """
+    if str(field).strip().lower() == 'none':
+        if test:
+            return '__change_me__'
+        else:
+            return 'None(__change_me__)'
+    return field
+
+
+def generate_field_for_django() -> dict:
+    """
+    Создает словарь с полями для сериализаторов и тестов.
+
+    :return: словарь с полями.
+    """
     fields_django = {
         'AutoField': ('IntegerField()', 'fake.pyint()'),
         'BigIntegerField': ('IntegerField()', 'fake.pyint()'),
@@ -45,6 +64,35 @@ class Utils(object):
         'OneToOneField': ('None(__change_me__)', '__change_me__'),
         'FieldFile': ('None(__change_me__)', 'fake.file_name()'),
     }
+    # Если добавлены поля из сторонних библиотек, то добавляем их в наш словарь
+    custom_fields = config('FIELD_CLASS_MODEL', default=None)
+    if custom_fields:
+        if custom_fields.endswith(';'):
+            custom_fields = custom_fields[:-1]
+
+        list_fields = custom_fields.split(';')
+        for element in list_fields:
+            list_elements = element.strip().split(',')
+            fields_django.update(
+                {
+                    list_elements[0]:
+                        (
+                            add_change_me(list_elements[1]),
+                            add_change_me(list_elements[2], test=True)
+                        ),
+                },
+            )
+    return fields_django
+
+
+class Utils(object):
+    """Класс содержит функции, которые используются несколько раз."""
+
+    # Ключ данной переменной это тип поля для моделей.
+    # Первый элемент кортежа - тип поля в сериализаторе
+    # Второй элемент кортежа - тип поля для тестов в библиотеке faker
+    fields_django = generate_field_for_django()
+
 
     @classmethod
     def remove_import(cls, text: str) -> str:
@@ -85,16 +133,29 @@ class Utils(object):
             f.write('')
 
     @classmethod
-    def hump_underline(cls, main_class) -> str:
+    def str_hump_underline(cls, str_camel) -> str:
         """Строка регистра Camel преобразуется в подчеркивание.
 
-        :param main_class: название класса в верблюжем стиле.
-        :return: название класса с подчеркиванием.
+        :param str_camel: строка в верблюжьем стиле.
+        :return: строка с подчеркиванием.
         """
         # Соответствие позиции разграничения строчных и прописных букв
         pattern = re.compile(r'([a-z]|\d)([A-Z])')
         # Второй параметр здесь использует обратную ссылку на обычную группу
-        return re.sub(pattern, r'\1_\2', main_class).lower()
+        return re.sub(pattern, r'\1_\2', str_camel).lower()
+
+    @classmethod
+    def str_camel(cls, str_underline) -> str:
+        """Строка с подчеркиваниями преобразуется в верблюжий стиль.
+
+        :param str_underline: строка с подчеркиваниями.
+        :return: строка в верблюжьем стиле.
+        """
+        str_camel = ''
+        list_elements = str_underline.split('_')
+        for element in list_elements:
+            str_camel += element.title()
+        return str_camel
 
     def field_for_serializers(self, name_field: str, type_field: str) -> dict:
         """Преобразование полей модели для сериализатора.

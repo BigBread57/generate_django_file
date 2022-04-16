@@ -7,6 +7,7 @@ from _ast import (
     Name, Constant,
 )
 
+from src.settings import config
 from src.utils.utils import Utils
 
 
@@ -17,6 +18,9 @@ class ModelAnalysis(ast.NodeVisitor):
         """Установка параметров и переменных для хранения данных."""
         # название родительского класса от которого наследуются модели
         self.parent_class = ['models.Model']
+        # если указан CLASS_MODEL, то добавляем классы
+        if config('CLASS_MODEL', default=None):
+            self.parent_class.append(*config('CLASS_MODEL').split(','))
         # аттрибуты модели
         self.fields_django_model = {}
         # аттрибуты сериализатора
@@ -87,13 +91,13 @@ class ModelAnalysis(ast.NodeVisitor):
 
             # Анализируем тело родительского класса
             if is_model_attr or is_model_name:
-                hump_main_class = self.utils.hump_underline(node.name)
+                maiin_class_underline = self.utils.str_hump_underline(node.name)
                 self.result.update(
                     {
-                        '{{main_class}}': node.name,
-                        '{{hump_main_class}}': hump_main_class,
+                        '{{MainClass}}': node.name,
+                        '{{main_class}}': maiin_class_underline,
                         '{{lower_main_class}}': node.name.lower(),
-                        '{{main-class}}': hump_main_class.replace('_', '-')
+                        '{{main-class}}': maiin_class_underline.replace('_', '-')
                     },
                 )
                 self.analysis_body(node)
@@ -104,7 +108,11 @@ class ModelAnalysis(ast.NodeVisitor):
         """Проверяем узлы, которые имеют класс Name."""
         if self.is_django_model:
             # проверка при поиске родительского класса и полей модели
+            # если поле модели, то node.id= models
             if node.id in self.convert_list(self.parent_class):
+                return node.id
+            # поиск полей из сторонних пакетов
+            if node.id in [*list(self.utils.fields_django.keys())]:
                 return node.id
 
         ast.NodeVisitor.generic_visit(self, node)
@@ -162,9 +170,12 @@ class ModelAnalysis(ast.NodeVisitor):
     def visit_Call(self, node):
         """Проверяем узлы, которые имеют класс Call."""
         if self.is_django_model:
-            # проверка для выявления полей модели
+            # проверка для выявления полей модели внутри django
             if isinstance(node.func, Attribute):
                 return self.visit_Attribute(node.func)
+            # проверка для выявления полей модели внутри сторонних пакетов
+            if isinstance(node.func, Name):
+                return self.visit_Name(node.func)
 
         ast.NodeVisitor.generic_visit(self, node)
         return False

@@ -1,14 +1,14 @@
 from rest_framework.viewsets import ModelViewSet
 
-from {{path_to_app}}.api.serializers import {{main_class}}Serializer
-from {{path_to_app}}.models import {{main_class}}
+from {{path_to_app}}.api.serializers import {{MainClass}}Serializer
+from {{path_to_app}}.models import {{MainClass}}
 
 
-class {{main_class}}ViewSet(ModelViewSet):
+class {{MainClass}}ViewSet(ModelViewSet):
     """{{docs}}"""
 
-    queryset = {{main_class}}.objects.all()
-    serializer_class = {{main_class}}Serializer
+    queryset = {{MainClass}}.objects.all()
+    serializer_class = {{MainClass}}Serializer
     ordering_fields = {{list_main_fields}}
     search_fields = {{list_main_fields}}
 
@@ -20,15 +20,15 @@ from rules.contrib.rest_framework import AutoPermissionViewSetMixin
 from {{path_to_app}}.api.serializers import AccountSerializer
 from {{path_to_app}}.models import Account
 
-class {{main_class}}ViewSet(
+class {{MainClass}}ViewSet(
     NestedViewSetMixin,
     AutoPermissionViewSetMixin,
     ModelViewSet,
 ):
     """{{docs}}"""
 
-    queryset = {{main_class}}.objects.all()
-    serializer_class = {{main_class}}Serializer
+    queryset = {{MainClass}}.objects.all()
+    serializer_class = {{MainClass}}Serializer
     ordering_fields = {{list_main_fields}}
     search_fields = {{list_main_fields}}
     permission_type_map = {

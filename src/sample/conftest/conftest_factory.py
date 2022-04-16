@@ -1,6 +1,6 @@
-class {{main_class}}Factory(DjangoModelFactory):
-    """Фабрика для {{main_class}}."""
+class {{MainClass}}Factory(DjangoModelFactory):
+    """Фабрика для {{MainClass}}."""
 
     class Meta(object):
-        model = {{main_class}}
+        model = {{MainClass}}
 

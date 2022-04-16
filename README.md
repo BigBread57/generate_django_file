@@ -263,9 +263,9 @@ def account_format():
 ({'name_field': 'type_field_for_serializers'})
 4) **fields_for_conftest** - словарь полей для тестов 
 ({'name_field': 'type_field_for_test'})
-5) **{{main_class}}** - название класса (AccountModel)
-6) **{{hump_main_class}}** - название класса с _ (account_model)
-7) **{{lower_main_class}}** - название класса в нижнем регистре (accountmodel)
+5) **{{MainClass}}** - название класса (AccountModel)
+6) **{{main_class}}** - название класса с _ (account_model)
+7) **{{lower_MainClass}}** - название класса в нижнем регистре (accountmodel)
 8) **{{main-class}}** - название класса с - (account-model)
 9) **{{docs}}** - документация модели (документация модели вставляется во всех 
 сгенерированных файлах)

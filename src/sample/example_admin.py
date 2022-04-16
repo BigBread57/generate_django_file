@@ -1,9 +1,9 @@
 from django.contrib import admin
-from {{path_to_app}}.model import {{main_class}}
+from {{path_to_app}}.model import {{MainClass}}
 
 
-@admin.register({{main_class}})
-class ConfigurableAdmin(admin.ModelAdmin[{{main_class}}]):
+@admin.register({{MainClass}})
+class ConfigurableAdmin(admin.ModelAdmin[{{MainClass}}]):
     """{{docs}}"""
 
     list_filter = {{list_main_fields}}

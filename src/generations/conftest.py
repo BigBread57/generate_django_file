@@ -9,7 +9,7 @@ class GenerateConftest(AbstractGenerate, Utils):
 
     def start_generate(self):
         # Открываем конечный файл и проверяем пусто он или нет.
-        f = open('src/done/conftest.py', 'r', encoding='utf-8')
+        f = open('done/conftest.py', 'r', encoding='utf-8')
         initial_conftest_file = f.read()
         f.close()
         if initial_conftest_file:
@@ -30,7 +30,7 @@ class GenerateConftest(AbstractGenerate, Utils):
 
     def actual_conftest(self):
         with open(
-                f'src/done/conftest.py',
+                'done/conftest.py',
                 'a+',
                 encoding='utf-8',
         ) as f:
@@ -51,7 +51,7 @@ class GenerateConftest(AbstractGenerate, Utils):
             )
 
             with open(
-                    f'src/done/conftest.py',
+                    'done/conftest.py',
                     'w',
                     encoding='utf-8',
             ) as f:
@@ -60,7 +60,7 @@ class GenerateConftest(AbstractGenerate, Utils):
     def initial_conftest(self):
         """Первичное добавление импортов в файл, фабрики и фикстур."""
         with open(
-                f'src/done/conftest.py',
+                'done/conftest.py',
                 'w',
                 encoding='utf-8',
         ) as f:
@@ -73,13 +73,13 @@ class GenerateConftest(AbstractGenerate, Utils):
     def conftest_factory(self):
         """Возвращает часть conftest файла, отвечающего за фабрики."""
         with open(
-                f'src/sample/conftest/conftest_factory.py',
+                'sample/conftest/conftest_factory.py',
                 'r',
                 encoding='utf-8',
         ) as f:
             conftest_factory = f.read()
-            hump_main_class = self.params.get('{{hump_main_class}}')
-            main_class = self.params.get('{{main_class}}')
+            maiin_class_underline = self.params.get('{{main_class}}')
+            main_class_camel = self.params.get('{{MainClass}}')
             factory_fields = ''
             fields_for_conftest = self.params.get('fields_for_conftest')
 
@@ -89,28 +89,28 @@ class GenerateConftest(AbstractGenerate, Utils):
                 else:
                     factory_field = (
                             f'    {key} = factory.LazyAttribute(' +
-                            f'lambda {hump_main_class}: {value})\n'
+                            f'lambda {maiin_class_underline}: {value})\n'
                     )
                 factory_fields += factory_field
-            factory_fields += '\n\n' + f'register({main_class})\n' + '\n\n'
+            factory_fields += '\n\n' + f'register({main_class_camel})\n' + '\n\n'
 
             return self.formatted_file(conftest_factory) + factory_fields
         
     def conftest_fixture(self):
         """Возвращает часть conftest файла, отвечающего за фикстуры."""
         with open(
-                f'src/sample/conftest/conftest_fixture.py',
+                'sample/conftest/conftest_fixture.py',
                 'r',
                 encoding='utf-8',
         ) as f:
             conftest_fixture = f.read()
             # Получаем из словаря название класса.
-            hump_main_class = self.params.get('{{hump_main_class}}')
+            maiin_class_underline = self.params.get('{{main_class}}')
             # формируем первую строку для format: return {'id': main.id,
             fixture_fields = (
                     '        return {\n' +
                     "            'id': {main_class}.pk,\n".format(
-                        main_class=hump_main_class,
+                        main_class=maiin_class_underline,
                     )
             )
             # Получаем из словаря поля и тип для faker.
@@ -118,14 +118,14 @@ class GenerateConftest(AbstractGenerate, Utils):
             # Формирует каждую строку по виду 'id': main.id
             for key, value in fields_for_conftest.items():
                 fixture_field = (
-                    f"            '{key}': {hump_main_class}.{key},\n"
+                    f"            '{key}': {maiin_class_underline}.{key},\n"
                 )
                 fixture_fields += fixture_field
 
             fixture_fields += (
                     '        }' +
                     '\n    return _{main_class}_format\n'.format(
-                        main_class=hump_main_class
+                        main_class=maiin_class_underline
                     )
             )
 
@@ -134,7 +134,7 @@ class GenerateConftest(AbstractGenerate, Utils):
     def conftest_import(self):
         """Возвращает часть conftest файла, отвечающего за импорты."""
         with open(
-                f'src/sample/conftest/conftest_import.py',
+                'sample/conftest/conftest_import.py',
                 'r',
                 encoding='utf-8',
         ) as f:

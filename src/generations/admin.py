@@ -11,7 +11,7 @@ class GenerateAdmin(AbstractGenerate, Utils):
         # Вызываем функцию, где открываем пример файла для админки и
         # считываем его, в заданные поля вставляем нужную информацию.
         initial_admin_file = self.generate_context(
-            'src/sample/example_admin.py',
+            'sample/example_admin.py',
             self.params,
         )
 
@@ -19,14 +19,14 @@ class GenerateAdmin(AbstractGenerate, Utils):
         # Если пустой, то мы просто запоминаем то, что сформировали выше.
         # Если файл не пустой - формируем документ. Изменяем from/import
         # и дописываем сформированные выше данные в документ.
-        with open('src/done/admin.py', 'r', encoding='utf-8') as f:
+        with open('done/admin.py', 'r', encoding='utf-8') as f:
             f.seek(0)
             admin_file = f.read()
             if admin_file:
                 # Поиск строки, где импортируется модель
                 # и добавляем к ней новую модель
                 str_old = admin_file.split('\n')[1]
-                str_new = f"{str_old}, {self.params.get('{{main_class}}')}"
+                str_new = f"{str_old}, {self.params.get('{{MainClass}}')}"
                 new_admin_file = admin_file.replace(str_old, str_new)
 
                 # Добавляем в конец документа просто класс, без импортов.
@@ -36,5 +36,5 @@ class GenerateAdmin(AbstractGenerate, Utils):
 
         # Открываем конечный файл для записи и вносим в него
         # сформированные данные.
-        with open('src/done/admin.py', 'w', encoding='utf-8') as f:
+        with open('done/admin.py', 'w', encoding='utf-8') as f:
             f.write(new_admin_file)
