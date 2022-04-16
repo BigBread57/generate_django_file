@@ -20,3 +20,5 @@ venv/
 # Configuration file with private data:
 *.env
 .env
+
+src/models/
