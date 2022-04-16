@@ -7,8 +7,8 @@ from _ast import (
     Name, Constant,
 )
 
-from src.settings import config
-from src.utils.utils import Utils
+from settings import config
+from helpers.helper import Helper
 
 
 class ModelAnalysis(ast.NodeVisitor):
@@ -31,7 +31,7 @@ class ModelAnalysis(ast.NodeVisitor):
         self.is_django_model = False
 
         self.result = {}
-        self.utils = Utils()
+        self.helper = Helper()
 
     @staticmethod
     def convert_list(params_list: list) -> list:
@@ -91,13 +91,13 @@ class ModelAnalysis(ast.NodeVisitor):
 
             # Анализируем тело родительского класса
             if is_model_attr or is_model_name:
-                maiin_class_underline = self.utils.str_hump_underline(node.name)
+                main_class_underline = self.helper.str_hump_underline(node.name)
                 self.result.update(
                     {
                         '{{MainClass}}': node.name,
-                        '{{main_class}}': maiin_class_underline,
+                        '{{main_class}}': main_class_underline,
                         '{{lower_main_class}}': node.name.lower(),
-                        '{{main-class}}': maiin_class_underline.replace('_', '-')
+                        '{{main-class}}': main_class_underline.replace('_', '-')
                     },
                 )
                 self.analysis_body(node)
@@ -112,7 +112,7 @@ class ModelAnalysis(ast.NodeVisitor):
             if node.id in self.convert_list(self.parent_class):
                 return node.id
             # поиск полей из сторонних пакетов
-            if node.id in [*list(self.utils.fields_django.keys())]:
+            if node.id in [*list(self.helper.fields_django.keys())]:
                 return node.id
 
         ast.NodeVisitor.generic_visit(self, node)
@@ -125,7 +125,7 @@ class ModelAnalysis(ast.NodeVisitor):
                 # ищем совпадения с models.Model или типами полей
                 if node.attr in [
                     *self.convert_list(self.parent_class),
-                    *list(self.utils.fields_django.keys()),
+                    *list(self.helper.fields_django.keys()),
                 ]:
                     return node.attr
 
@@ -151,14 +151,14 @@ class ModelAnalysis(ast.NodeVisitor):
                         )
                         # Сохраняем поля для сериализатора
                         self.fields_for_serializers.update(
-                            self.utils.field_for_serializers(
+                            self.helper.field_for_serializers(
                                 node.targets[0].id,
                                 assign_value,
                             )
                         )
                         # Сохраняем поля для conftest
                         self.fields_for_conftest.update(
-                            self.utils.field_for_fake(
+                            self.helper.field_for_fake(
                                 node.targets[0].id,
                                 assign_value,
                             )

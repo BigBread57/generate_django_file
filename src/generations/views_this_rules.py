@@ -1,7 +1,7 @@
 from helpers.helper import AbstractGenerate, Helper
 
 
-class GenerateViews(AbstractGenerate, Helper):
+class GenerateViewsThisRules(AbstractGenerate, Helper):
     """Генерация представления"""
 
     def __init__(self, dict_params: dict, *args, **kwargs) -> None:
@@ -14,7 +14,7 @@ class GenerateViews(AbstractGenerate, Helper):
         # Вызываем функцию, где открываем пример файла для представлений и
         # считываем его, в заданные поля вставляем нужную информацию.
         initial_views_file = self.generate_context(
-            'sample/example_views.py',
+            'sample/example_views_this_rules.py',
             self.params,
         )
 

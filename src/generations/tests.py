@@ -1,7 +1,7 @@
-from utils.utils import Utils, AbstractGenerate
+from helpers.helper import Helper, AbstractGenerate
 
 
-class GenerateTests(AbstractGenerate, Utils):
+class GenerateTests(AbstractGenerate, Helper):
 
     def __init__(self, dict_params: dict, *args, **kwargs) -> None:
         """Инициализируем переменные (параметры для вставки, название файла)."""
@@ -19,7 +19,7 @@ class GenerateTests(AbstractGenerate, Utils):
 
         # Открываем конечный файл для записи. Записываем то, что сформировали.
         with open(
-                f'done/tests/test_api_{self.name_file}.py',
+                f'done/tests/test_app/test_api_{self.name_file}.py',
                 'w',
                 encoding='utf-8',
         ) as f:

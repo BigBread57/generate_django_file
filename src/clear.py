@@ -1,4 +1,4 @@
-from utils import Utils
+from helpers import Helper
 
-a = Utils()
+a = Helper()
 a.cleaning_directory_done()

@@ -1,7 +1,7 @@
-from utils.utils import Utils, AbstractGenerate
+from helpers.helper import Helper, AbstractGenerate
 
 
-class GenerateRules(AbstractGenerate, Utils):
+class GenerateRules(AbstractGenerate, Helper):
 
     def __init__(self, dict_params: dict, *args, **kwargs) -> None:
         """Инициализируем переменные (параметры для вставки, название файла)."""

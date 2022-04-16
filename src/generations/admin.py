@@ -1,7 +1,7 @@
-from utils.utils import Utils, AbstractGenerate
+from helpers.helper import Helper, AbstractGenerate
 
 
-class GenerateAdmin(AbstractGenerate, Utils):
+class GenerateAdmin(AbstractGenerate, Helper):
 
     def __init__(self, dict_params: dict, *args, **kwargs) -> None:
         self.params = dict_params

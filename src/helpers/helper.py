@@ -4,7 +4,7 @@ import re
 from abc import abstractmethod
 from pathlib import Path
 
-from src.settings import config
+from settings import config
 
 
 def add_change_me(field, test=False) -> str:
@@ -85,7 +85,7 @@ def generate_field_for_django() -> dict:
     return fields_django
 
 
-class Utils(object):
+class Helper(object):
     """Класс содержит функции, которые используются несколько раз."""
 
     # Ключ данной переменной это тип поля для моделей.
@@ -111,9 +111,9 @@ class Utils(object):
         directory_before_done = Path(__file__).parent.parent.joinpath('done')
         directories = (
             f'{directory_before_done}/rules/*',
-            f'{directory_before_done}/serializers/*',
-            f'{directory_before_done}/tests/*',
-            f'{directory_before_done}/views/*',
+            f'{directory_before_done}/api/serializers/*',
+            f'{directory_before_done}/tests/test_app/*',
+            f'{directory_before_done}/api/views/*',
         )
         for directory in directories:
             files = glob.glob(directory)
@@ -126,7 +126,13 @@ class Utils(object):
         ) as f:
             f.write('')
         with open(
-                f'{directory_before_done}/conftest.py',
+                f'{directory_before_done}/tests/conftest.py',
+                'w',
+                encoding='utf-8',
+        ) as f:
+            f.write('')
+        with open(
+                f'{directory_before_done}/api/routers.py',
                 'w',
                 encoding='utf-8',
         ) as f:

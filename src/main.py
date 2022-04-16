@@ -1,44 +1,37 @@
 import ast
-from pprint import pprint
+import os
+import typer
 
 from generate_sample import GenerateSample
+from helpers import ModelAnalysis
+from settings import BASE_DIR
 
-tree = ast.parse("""
-class Question(RulesModelMixin, MPTTModel, metaclass=RulesPolymorphicModelBase):
-    "Вопрос из опросника."
+# app = typer.Typer()
 
-    text = models.CharField(_('текст вопроса'), max_length=255)
-    tag = models.CharField(
-        _('slug вопроса'),
-        help_text=_('используется для составления ключей результатов.'),
-        max_length=50,
-    )
-    parent = TreeForeignKey(
-        'self',
-        related_name='next_questions',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-    parent_answers = models.ManyToManyField(
-        'Answer',
-        related_name='children_by_answer',
-        blank=True,
-    )
 
-    class Meta(object):
-        verbose_name = _('вопрос')
-        verbose_name_plural = _('вопросы')
+def main(path_to_model: str, rules=False, path_to_api: str = '', app_name: str = ''):
+    for filename in os.listdir(BASE_DIR.joinpath(f'{path_to_model}')):
 
-    @property
-    def answers_string(self):
-        "Строка ответа для представления в админке."
-        return ','.join([answer.text for answer in self.parent_answers.all()])
+        with open(os.path.join(BASE_DIR.joinpath(f'{path_to_model}'), filename), 'r') as f:
+            tree = ast.parse(f.read())
+            visitor = ModelAnalysis()
+            visitor.visit(tree)
 
-    def __str__(self):
-        return f'{self.tag}: {self.text}'
-""")
+            if visitor.result.get('{{MainClass}}'):
+                if path_to_api and app_name:
+                    generate_sample = GenerateSample(
+                        visitor.result,
+                        typer_start={
+                            'path_to_api': f'{path_to_api}',
+                            'app_name': f'{app_name}',
+                        },
+                    )
+                else:
+                    generate_sample = GenerateSample(visitor.result)
+                generate_sample.start()
+            else:
+                continue
 
-generate_sample = GenerateSample(tree)
-pprint(ast.dump(tree))
-generate_sample.start()
+
+if __name__ == "__main__":
+    typer.run(main)

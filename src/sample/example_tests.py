@@ -13,13 +13,11 @@ def test_{{main_class}}_format(
     {{main_class}}_format,
 ):
     """Формат {{MainClass}}"""
-    url = reverse(
-        'api:{{app-name}}:{{main-class}}-detail',
-        [{{main_class}}.pk],
-    )
+    url = reverse('{{app-name}}:{{main-class}}-detail', [{{main_class}}.pk])
 
-    json_response = api_client.get(url).json()
+    response = api_client.get(url)
 
+    assert response.status_code = status.HTTP_200_OK
     assert json_response == {{main_class}}_format({{main_class}})
 
 
@@ -28,30 +26,24 @@ def test_{{main_class}}_post(
     api_client,
 ):
     """Создание {{MainClass}}"""
-    url = reverse('api:{{app-name}}:{{main-class}}-list')
-    json_response = api_client.post(
+    url = reverse('{{app-name}}:{{main-class}}-list')
+    response = api_client.post(
         url,
         data={},
         format='json',
     )
 
-    assert json_response.status_code == status.HTTP_201_CREATED
+    assert response.status_code == status.HTTP_201_CREATED
 
 
 @pytest.mark.django_db()
-def test_{{main_class}}_delete(
-    api_client,
-    {{main_class}},
-):
+def test_{{main_class}}_delete(api_client, {{main_class}}):
     """Удаление {{MainClass}}"""
-    url = reverse(
-        'api:{{app-name}}:{{main-class}}-detail',
-        [{{main_class}}.pk],
-    )
+    url = reverse('{{app-name}}:{{main-class}}-detail', [{{main_class}}.pk])
 
-    json_response = api_client.delete(url)
+    response = api_client.delete(url)
 
-    assert json_response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
 @pytest.mark.django_db()
@@ -60,15 +52,12 @@ def test_{{main_class}}_change(
     {{main_class}},
 ):
     """Изменение {{MainClass}}"""
-    url = reverse(
-        'api:{{app-name}}:{{main-class}}-detail',
-        [{{main_class}}.pk],
-    )
+    url = reverse('api:{{app-name}}:{{main-class}}-detail', [{{main_class}}.pk])
 
-    json_response = api_client.put(
+    response = api_client.put(
         url,
         data={},
         format='json',
     )
 
-    assert json_response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_200_OK

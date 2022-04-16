@@ -1,7 +1,7 @@
-from utils.utils import Utils, AbstractGenerate
+from helpers.helper import Helper, AbstractGenerate
 
 
-class GenerateSerializers(AbstractGenerate, Utils):
+class GenerateSerializers(AbstractGenerate, Helper):
 
     def __init__(self, dict_params: dict, *args, **kwargs) -> None:
         """Инициализируем переменные (параметры для вставки, название файла)."""
@@ -19,7 +19,7 @@ class GenerateSerializers(AbstractGenerate, Utils):
 
         # Открываем конечный файл для записи. Записываем то, что сформировали.
         with open(
-                f'done/serializers/{self.name_file}.py',
+                f'done/api/serializers/{self.name_file}.py',
                 'w',
                 encoding='utf-8',
         ) as f:
@@ -28,7 +28,7 @@ class GenerateSerializers(AbstractGenerate, Utils):
         # Открываем конечный файл для записи в конец файла.
         # Формируем поля для serializers.Serializers и вставляем их в файл.
         with open(
-                f'done/serializers/{self.name_file}.py',
+                f'done/api/serializers/{self.name_file}.py',
                 'a+',
                 encoding='utf-8',
         ) as f:

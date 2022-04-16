@@ -1,9 +1,13 @@
-from src.generations.admin import GenerateAdmin
-from src.generations.conftest import GenerateConftest
-from src.generations.rules import GenerateRules
-from src.generations.serializers import GenerateSerializers
-from src.generations.tests import GenerateTests
-from src.generations.views import GenerateViews
+from generations.admin import GenerateAdmin
+from generations.conftest import GenerateConftest
+from generations.rules import GenerateRules
+from generations.serializers import GenerateSerializers
+from generations.tests import GenerateTests
+from generations.views import GenerateViews
+from generations.views_this_rules import GenerateViewsThisRules
+from generations.init_serializers import GenerateInitSerializers
+from generations.init_views import GenerateInitViews
+from generations.routers import GenerateRouters
 
 __all__ = [
     'GenerateAdmin',
@@ -12,4 +16,8 @@ __all__ = [
     'GenerateSerializers',
     'GenerateTests',
     'GenerateViews',
+    'GenerateViewsThisRules',
+    'GenerateInitSerializers',
+    'GenerateInitViews',
+    'GenerateRouters',
 ]
