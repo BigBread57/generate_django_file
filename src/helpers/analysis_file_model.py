@@ -1,13 +1,7 @@
 import ast
-from _ast import (
-    Assign,
-    Attribute,
-    Call,
-    Expr,
-    Name, Constant,
-)
+import os
+from _ast import Assign, Attribute, Call, Constant, Expr, Name
 
-from settings import config
 from helpers.helper import Helper
 
 
@@ -19,8 +13,8 @@ class ModelAnalysis(ast.NodeVisitor):
         # название родительского класса от которого наследуются модели
         self.parent_class = ['models.Model']
         # если указан CLASS_MODEL, то добавляем классы
-        if config('CLASS_MODEL', default=None):
-            self.parent_class.append(*config('CLASS_MODEL').split(','))
+        if os.environ.get('CLASS_MODEL', default=None):
+            self.parent_class.append(*os.environ.get('CLASS_MODEL').split(','))
         # аттрибуты модели
         self.fields_django_model = {}
         # аттрибуты сериализатора
@@ -112,7 +106,7 @@ class ModelAnalysis(ast.NodeVisitor):
             if node.id in self.convert_list(self.parent_class):
                 return node.id
             # поиск полей из сторонних пакетов
-            if node.id in [*list(self.helper.fields_django.keys())]:
+            if node.id in [*list(self.helper.type_fields_django.keys())]:
                 return node.id
 
         ast.NodeVisitor.generic_visit(self, node)
@@ -125,7 +119,7 @@ class ModelAnalysis(ast.NodeVisitor):
                 # ищем совпадения с models.Model или типами полей
                 if node.attr in [
                     *self.convert_list(self.parent_class),
-                    *list(self.helper.fields_django.keys()),
+                    *list(self.helper.type_fields_django.keys()),
                 ]:
                     return node.attr
 

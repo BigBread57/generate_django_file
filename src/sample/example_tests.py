@@ -12,7 +12,7 @@ def test_{{main_class}}_format(
     {{main_class}},
     {{main_class}}_format,
 ):
-    """Формат {{MainClass}}"""
+    """Формат {{MainClass}}."""
     url = reverse('{{app-name}}:{{main-class}}-detail', [{{main_class}}.pk])
 
     response = api_client.get(url)
@@ -25,7 +25,7 @@ def test_{{main_class}}_format(
 def test_{{main_class}}_post(
     api_client,
 ):
-    """Создание {{MainClass}}"""
+    """Создание {{MainClass}}."""
     url = reverse('{{app-name}}:{{main-class}}-list')
     response = api_client.post(
         url,
@@ -38,7 +38,7 @@ def test_{{main_class}}_post(
 
 @pytest.mark.django_db()
 def test_{{main_class}}_delete(api_client, {{main_class}}):
-    """Удаление {{MainClass}}"""
+    """Удаление {{MainClass}}."""
     url = reverse('{{app-name}}:{{main-class}}-detail', [{{main_class}}.pk])
 
     response = api_client.delete(url)
@@ -51,7 +51,7 @@ def test_{{main_class}}_change(
     api_client,
     {{main_class}},
 ):
-    """Изменение {{MainClass}}"""
+    """Изменение {{MainClass}}."""
     url = reverse('api:{{app-name}}:{{main-class}}-detail', [{{main_class}}.pk])
 
     response = api_client.put(

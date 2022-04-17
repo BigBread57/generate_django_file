@@ -2,6 +2,7 @@ from helpers.helper import Helper, AbstractGenerate
 
 
 class GenerateTests(AbstractGenerate, Helper):
+    """Генерация тестов."""
 
     def __init__(self, dict_params: dict, *args, **kwargs) -> None:
         """Инициализируем переменные (параметры для вставки, название файла)."""
@@ -12,15 +13,15 @@ class GenerateTests(AbstractGenerate, Helper):
         """Генерация файла."""
         # Вызываем функцию, где открываем пример файла для теста и
         # считываем его, в заданные поля вставляем нужную информацию.
-        initial_tests_file = self.generate_context(
+        initial_file = self.generate_context(
             'sample/example_tests.py',
             self.params,
         )
 
         # Открываем конечный файл для записи. Записываем то, что сформировали.
         with open(
-                f'done/tests/test_app/test_api_{self.name_file}.py',
-                'w',
-                encoding='utf-8',
+            f'done/tests/test_app/test_api_{self.name_file}.py',
+            'w',
+            encoding='utf-8',
         ) as f:
-            f.write(initial_tests_file)
+            f.write(initial_file)

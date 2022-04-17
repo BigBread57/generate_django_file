@@ -2,6 +2,7 @@ from helpers.helper import Helper, AbstractGenerate
 
 
 class GenerateRules(AbstractGenerate, Helper):
+    """Генерация файлов для прав доступа пакета django-rules."""
 
     def __init__(self, dict_params: dict, *args, **kwargs) -> None:
         """Инициализируем переменные (параметры для вставки, название файла)."""
@@ -12,7 +13,7 @@ class GenerateRules(AbstractGenerate, Helper):
         """Генерация файла."""
         # Вызываем функцию, где открываем пример файла для прав доступа и
         # считываем его, в заданные поля вставляем нужную информацию.
-        initial_rules_file = self.generate_context(
+        initial_file = self.generate_context(
             'sample/example_rules.py',
             self.params,
         )
@@ -20,8 +21,6 @@ class GenerateRules(AbstractGenerate, Helper):
         # Открываем конечный файл для записи и вносим в него
         # сформированные данные.
         with open(
-                f'done/rules/{self.name_file}.py',
-                'w',
-                encoding='utf-8',
+            f'done/rules/{self.name_file}.py', 'w', encoding='utf-8',
         ) as f:
-            f.write(initial_rules_file)
+            f.write(initial_file)

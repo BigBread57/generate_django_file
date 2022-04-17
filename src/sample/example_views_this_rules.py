@@ -9,7 +9,7 @@ class {{MainClass}}ViewSet(
     AutoPermissionViewSetMixin,
     ModelViewSet,
 ):
-    """{{docs}}"""
+    """{{docs}}."""
 
     queryset = {{MainClass}}.objects.all()
     serializer_class = {{MainClass}}Serializer

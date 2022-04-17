@@ -3,3 +3,5 @@ mccabe==0.6.1
 pycodestyle==2.8.0
 pyflakes==2.4.0
 python-dotenv==0.19.2
+
+typer~=0.4.1

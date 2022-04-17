@@ -4,7 +4,7 @@ from {{path_to_app}}.models import {{MainClass}}
 
 
 class {{MainClass}}Serializer(serializers.ModelSerializer):
-    """{{docs}}"""
+    """{{docs}}."""
 
     class Meta(object):
         model = {{MainClass}}
@@ -12,4 +12,5 @@ class {{MainClass}}Serializer(serializers.ModelSerializer):
 
 
 class {{MainClass}}Serializer(serializers.Serializer):
-    """{{docs}}"""
+    """{{docs}}."""
+

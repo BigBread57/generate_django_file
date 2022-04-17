@@ -19,7 +19,7 @@ class GenerateAdmin(AbstractGenerate, Helper):
         # Если пустой, то мы просто запоминаем то, что сформировали выше.
         # Если файл не пустой - формируем документ. Изменяем from/import
         # и дописываем сформированные выше данные в документ.
-        with open('done/admin.py', 'r', encoding='utf-8') as f:
+        with open('done/admin.py', 'a+', encoding='utf-8') as f:
             f.seek(0)
             admin_file = f.read()
             if admin_file:

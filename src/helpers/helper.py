@@ -1,36 +1,31 @@
-import glob
 import os
 import re
 from abc import abstractmethod
-from pathlib import Path
-
-from settings import config
 
 
-def add_change_me(field, test=False) -> str:
+def add_change_me(type_field, test=False) -> str:
     """
     Добавляет __change_me__, если передано None.
 
-    :param field: поле для сериализатора или теста
-    :param test: флаг указывающий, что поле для генерации тестов
-    :return: значение поле: если None, добавляем с __change_me__, иначе
+    :param type_field: тип поля для сериализатора или теста
+    :param test: флаг указывающий, что тип поле для генерации тестов
+    :return: тип поля: если None, добавляем __change_me__, иначе
     переданное значение поля
     """
-    if str(field).strip().lower() == 'none':
+    if str(type_field).strip().lower() == 'none':
         if test:
             return '__change_me__'
         else:
             return 'None(__change_me__)'
-    return field
+    return type_field
 
 
-def generate_field_for_django() -> dict:
+def generate_type_field_for_django() -> dict:
+    """Создает словарь с полями для сериализаторов и тестов.
+
+    :return: словарь с типами полей для тестов и сериализаторов.
     """
-    Создает словарь с полями для сериализаторов и тестов.
-
-    :return: словарь с полями.
-    """
-    fields_django = {
+    type_fields_django = {
         'AutoField': ('IntegerField()', 'fake.pyint()'),
         'BigIntegerField': ('IntegerField()', 'fake.pyint()'),
         'BooleanField': ('BooleanField()', 'fake.pybool()'),
@@ -65,34 +60,35 @@ def generate_field_for_django() -> dict:
         'FieldFile': ('None(__change_me__)', 'fake.file_name()'),
     }
     # Если добавлены поля из сторонних библиотек, то добавляем их в наш словарь
-    custom_fields = config('FIELD_CLASS_MODEL', default=None)
-    if custom_fields:
-        if custom_fields.endswith(';'):
-            custom_fields = custom_fields[:-1]
+    custom_type_fields = os.environ.get('FIELD_CLASS_MODEL', default=None)
+    if custom_type_fields:
+        # удаляем ';' если был передан
+        if custom_type_fields.endswith(';'):
+            custom_type_fields = custom_type_fields[:-1]
 
-        list_fields = custom_fields.split(';')
-        for element in list_fields:
+        # делим переданные элементы и записываем в конечныфй словарь
+        list_type_fields = custom_type_fields.split(';')
+        for element in list_type_fields:
             list_elements = element.strip().split(',')
-            fields_django.update(
+            type_fields_django.update(
                 {
-                    list_elements[0]:
+                    list_elements[0]:  # django
                         (
-                            add_change_me(list_elements[1]),
-                            add_change_me(list_elements[2], test=True)
+                            add_change_me(list_elements[1]),  # serializer
+                            add_change_me(list_elements[2], test=True)  # test
                         ),
                 },
             )
-    return fields_django
+    return type_fields_django
 
 
 class Helper(object):
-    """Класс содержит функции, которые используются несколько раз."""
+    """Класс содержит функции, которые помогают генерировать django файлы."""
 
     # Ключ данной переменной это тип поля для моделей.
     # Первый элемент кортежа - тип поля в сериализаторе
     # Второй элемент кортежа - тип поля для тестов в библиотеке faker
-    fields_django = generate_field_for_django()
-
+    type_fields_django = generate_type_field_for_django()
 
     @classmethod
     def remove_import(cls, text: str) -> str:
@@ -106,41 +102,8 @@ class Helper(object):
         return text.replace(str_imports, '')
 
     @classmethod
-    def cleaning_directory_done(cls):
-        """Очищаем все в папке done от старых файлов."""
-        directory_before_done = Path(__file__).parent.parent.joinpath('done')
-        directories = (
-            f'{directory_before_done}/rules/*',
-            f'{directory_before_done}/api/serializers/*',
-            f'{directory_before_done}/tests/test_app/*',
-            f'{directory_before_done}/api/views/*',
-        )
-        for directory in directories:
-            files = glob.glob(directory)
-            for f in files:
-                os.remove(f)
-        with open(
-                f'{directory_before_done}/admin.py',
-                'w',
-                encoding='utf-8',
-        ) as f:
-            f.write('')
-        with open(
-                f'{directory_before_done}/tests/conftest.py',
-                'w',
-                encoding='utf-8',
-        ) as f:
-            f.write('')
-        with open(
-                f'{directory_before_done}/api/routers.py',
-                'w',
-                encoding='utf-8',
-        ) as f:
-            f.write('')
-
-    @classmethod
     def str_hump_underline(cls, str_camel) -> str:
-        """Строка регистра Camel преобразуется в подчеркивание.
+        """Строка в верблюжьем стиле преобразуется в подчеркивание.
 
         :param str_camel: строка в верблюжьем стиле.
         :return: строка с подчеркиванием.
@@ -163,30 +126,9 @@ class Helper(object):
             str_camel += element.title()
         return str_camel
 
-    def field_for_serializers(self, name_field: str, type_field: str) -> dict:
-        """Преобразование полей модели для сериализатора.
-
-        :param name_field: название поля.
-        :param type_field: тип поля для сериализтора.
-        :return: словарь {название поля: тип поля}.
-        """
-        return {
-            name_field: self.fields_django.get(type_field)[0]
-        }
-
-    def field_for_fake(self, name_field: str, type_field: str) -> dict:
-        """Преобразование полей модели для тестов и библиотеки faker.
-
-        :param name_field: название поля.
-        :param type_field: тип поля для тестов из библиотеки faker.
-        :return: словарь {название поля: тип поля}.
-        """
-        return {
-            name_field: self.fields_django.get(type_field)[1]
-        }
-
-    def generate_context(self, path: str, params: dict) -> str:
-        """Генерируем из шаблона нужный документ.
+    @classmethod
+    def generate_context(cls, path: str, params: dict) -> str:
+        """Генерируем из шаблона нужный документ, подставляя параметры.
 
         :param path: путь до шаблона файла.
         :param params: словарь параметров откуда берется информация для вставки.
@@ -198,15 +140,35 @@ class Helper(object):
                 # В словаре много ключей, ищем нужные по совпадению.
                 if initial_file.find(key) > 0:
                     initial_file = initial_file.replace(
-                        key,
-                        str(value),
+                        key, str(value),
                     )
                 if params.get('{{docs}}') is None:
                     initial_file = initial_file.replace(
-                        '{{docs}}',
-                        '',
+                        '{{docs}}', '',
                     )
         return initial_file
+
+    def field_for_serializers(self, name_field: str, type_field: str) -> dict:
+        """Преобразование полей модели для сериализатора.
+
+        :param name_field: название поля.
+        :param type_field: тип поля для сериализтора.
+        :return: словарь {название поля: тип поля}.
+        """
+        return {
+            name_field: self.type_fields_django.get(type_field)[0]
+        }
+
+    def field_for_fake(self, name_field: str, type_field: str) -> dict:
+        """Преобразование полей модели для тестов из библиотеки faker.
+
+        :param name_field: название поля.
+        :param type_field: тип поля для тестов из библиотеки faker.
+        :return: словарь {название поля: тип поля}.
+        """
+        return {
+            name_field: self.type_fields_django.get(type_field)[1]
+        }
 
 
 class AbstractGenerate(object):
@@ -215,4 +177,3 @@ class AbstractGenerate(object):
     @abstractmethod
     def start_generate(self) -> None:
         """Генерирует файл с нужными данными или содержит порядок действия."""
-
