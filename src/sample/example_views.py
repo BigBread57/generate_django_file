@@ -5,7 +5,7 @@ from {{path_to_app}}.models import {{MainClass}}
 
 
 class {{MainClass}}ViewSet(ModelViewSet):
-    """{{docs}}."""
+    """{{docs}}"""
 
     queryset = {{MainClass}}.objects.all()
     serializer_class = {{MainClass}}Serializer

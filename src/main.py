@@ -11,8 +11,8 @@ app = typer.Typer()
 preparation = Preparation()
 
 
-os.environ['APP_NAME'] = 'app'
-os.environ['PATH_TO_API'] = 'my_app'
+os.environ['APP_NAME'] = 'bizone_bug_bounty'
+os.environ['PATH_TO_API'] = 'server.apps.bizone_bug_bounty.'
 
 
 @app.command()
