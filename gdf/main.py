@@ -1,3 +1,9 @@
+# """Модуль, позволяющий использовать ``python -m gdf."""
+# from gdf.main import cli
+#
+# cli.main()
+
+
 import os
 import typer
 
@@ -12,14 +18,14 @@ preparation = Preparation()
 
 
 os.environ['APP_NAME'] = 'bizone_bug_bounty'
-os.environ['PATH_TO_API'] = 'server.apps.bizone_bug_bounty.'
+os.environ['PATH_TO_API'] = 'server.apps.bizone_bug_bounty'
 
 
 @app.command()
 def generate(
         path_to_models: str = typer.Argument(
             ...,
-            help='Путь до моделей в проекте, например src/models',
+            help='Путь до моделей в проекте, например gdf/models',
         ),
         rules: Optional[bool] = typer.Option(
             False,
@@ -28,7 +34,7 @@ def generate(
         ),
         path_to_api: Optional[str] = typer.Option(
             None,
-            help='Путь до приложения в проекте, например src.my_app',
+            help='Путь до приложения в проекте, например gdf.my_app',
         ),
         app_name: Optional[str] = typer.Option(
             None,
